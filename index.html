@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maison Véra — Aesthetic Studio</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+  :root{
+    --bg:#0a0908;
+    --bg-2:#131110;
+    --bg-3:#1a1613;
+    --ivory:#f4ede2;
+    --ivory-dim:#9b9186;
+    --gold:#cba86c;
+    --gold-dim:#9c7539;
+
+    --page-bg:#f5efe5;
+    --page-ink:#241f1b;
+    --page-ink-dim:#6e6357;
+
+    --glass-bg: rgba(244,237,226,0.045);
+    --glass-bg-strong: rgba(244,237,226,0.07);
+    --glass-border: rgba(244,237,226,0.12);
+    --glass-blur: 22px;
+    --glass-shadow: 0 24px 70px rgba(0,0,0,0.35);
+
+    --line: rgba(244,237,226,0.09);
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+    --sp-section: clamp(110px, 14vw, 200px);
+    --sp-pad: clamp(24px, 5vw, 72px);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    background:var(--bg);
+    color:var(--ivory);
+    font-family:'Manrope', sans-serif;
+    font-weight:300;
+    overflow-x:hidden;
+    cursor:none;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces', serif; font-weight:400; letter-spacing:-0.01em; }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  ::selection{ background:var(--gold); color:var(--bg); }
+  button{ font-family:inherit; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+  @media (hover:none), (pointer:coarse){ body{cursor:auto;} #cursor,#cursor-ring,#cursor-label{display:none !important;} }
+
+  /* light page sections vs. dark self-contained surfaces (cards, photos) nested inside them */
+  .light{ background:var(--page-bg); --ivory:var(--page-ink); --ivory-dim:var(--page-ink-dim); --line:rgba(36,31,27,0.12); color:var(--ivory); }
+  .dark-surface{ --ivory:#f4ede2; --ivory-dim:#9b9186; --line:rgba(244,237,226,0.09); color:var(--ivory); }
+  .light .btn-primary{ background:var(--gold); color:#1c1712; }
+  .light .btn-primary:hover{ background:#1c1712; color:#f4ede2; }
+  .light .glass{ background:rgba(36,31,27,0.035); border-color:rgba(36,31,27,0.1); box-shadow:0 20px 50px rgba(36,31,27,0.08), inset 0 1px 0 rgba(255,255,255,0.4); }
+
+  /* ================= CURSOR ================= */
+  #cursor{
+    position:fixed; top:0; left:0; width:6px; height:6px; border-radius:50%;
+    background:var(--gold); pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%);
+  }
+  #cursor-ring{
+    position:fixed; top:0; left:0; width:38px; height:38px; border-radius:50%;
+    border:1px solid rgba(244,237,226,0.35); pointer-events:none; z-index:9998;
+    transform:translate(-50%,-50%);
+    transition: width 0.35s var(--ease), height 0.35s var(--ease), border-color 0.35s ease, background 0.35s ease;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #cursor-ring.grow{ width:90px; height:90px; background:rgba(203,168,108,0.08); border-color:var(--gold); }
+  #cursor-label{
+    font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold);
+    opacity:0; transition:opacity 0.3s ease; white-space:nowrap;
+  }
+  #cursor-ring.grow #cursor-label{ opacity:1; }
+
+  /* ================= AMBIENT BACKGROUND ================= */
+  #grain{
+    position:fixed; inset:0; z-index:997; pointer-events:none; opacity:0.045; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  #ambient{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 40% 30% at 85% 8%, rgba(203,168,108,0.05), transparent 60%),
+      radial-gradient(ellipse 35% 25% at 10% 60%, rgba(203,168,108,0.035), transparent 60%);
+  }
+
+  /* ================= GLASS SYSTEM ================= */
+  .glass{
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.1);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgba(244,237,226,0.06);
+    position:relative;
+  }
+  .glass::before{
+    content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:linear-gradient(155deg, rgba(244,237,226,0.06), transparent 40%);
+  }
+
+  /* ================= INTRO ================= */
+  #intro{
+    position:fixed; inset:0; z-index:1000; background:var(--bg);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+  }
+  .intro-word{ overflow:hidden; }
+  .intro-mark{ font-family:'Fraunces', serif; font-size:clamp(1.7rem, 5vw, 2.8rem); letter-spacing:0.02em; display:flex; gap:0.35em; }
+  .intro-mark span{ display:inline-block; transform:translateY(115%); }
+  .intro-mark .accent{ font-style:italic; color:var(--gold); }
+  .intro-progress{ margin-top:30px; width:140px; height:1px; background:rgba(244,237,226,0.14); position:relative; overflow:hidden; }
+  .intro-progress::after{ content:''; position:absolute; inset:0; background:var(--gold); transform:scaleX(0); transform-origin:left; }
+  .intro-progress.animate::after{ animation: progressFill 1s var(--ease) forwards; }
+  @keyframes progressFill{ to{ transform:scaleX(1); } }
+
+  /* ================= FLOATING NAV ================= */
+  .nav-wrap{ position:fixed; top:22px; left:0; right:0; z-index:100; display:flex; justify-content:center; padding:0 var(--sp-pad); opacity:0; }
+  header{
+    width:100%; max-width:1180px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 14px 14px 26px;
+    border-radius:100px;
+    transition: background 0.5s ease, box-shadow 0.5s ease, padding 0.4s ease;
+  }
+  header.scrolled{ background:rgba(10,9,8,0.55); box-shadow:0 20px 50px rgba(0,0,0,0.3); }
+  .logo{ font-family:'Fraunces', serif; font-size:1.2rem; letter-spacing:0.01em; }
+  nav ul{ list-style:none; display:flex; gap:clamp(16px,2.6vw,36px); }
+  nav a{ font-size:0.72rem; letter-spacing:0.13em; text-transform:uppercase; color:var(--ivory); position:relative; }
+  nav a::after{ content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px; background:var(--gold); transition:width 0.4s var(--ease); }
+  nav a:hover::after{ width:100%; }
+  .nav-right{ display:flex; align-items:center; gap:22px; }
+  .nav-phone{ display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--ivory); transition:color 0.3s ease; white-space:nowrap; }
+  .nav-phone:hover{ color:var(--gold); }
+  .nav-phone svg{ width:14px; height:14px; flex-shrink:0; }
+  .nav-book{
+    font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase;
+    background:var(--gold); color:var(--bg); border:1px solid var(--gold);
+    padding:11px 22px; border-radius:100px; transition: all 0.4s var(--ease);
+  }
+  .nav-book:hover{ background:var(--ivory); border-color:var(--ivory); }
+  @media(max-width:900px){ .nav-phone span, nav{ display:none; } .nav-wrap{ top:16px; } }
+  @media(max-width:600px){
+    header{ padding:10px 10px 10px 18px; }
+    .logo{ font-size:1rem; }
+    .nav-right{ gap:12px; }
+    .nav-phone{ padding:6px; }
+    .nav-phone svg{ width:16px; height:16px; }
+    .nav-book{ font-size:0.62rem; letter-spacing:0.06em; padding:9px 14px; white-space:nowrap; }
+  }
+
+  /* ================= HERO ================= */
+  .hero{
+    position:relative; height:100vh; min-height:700px;
+    display:flex; align-items:flex-end; overflow:hidden;
+    padding: 0 var(--sp-pad) 110px;
+  }
+  .hero-video-wrap{ position:absolute; inset:0; z-index:0; }
+  .hero-video-wrap video{ width:100%; height:100%; object-fit:cover; filter:brightness(0.5) saturate(0.85); transform:scale(1.08); }
+  .hero-video-wrap::after{ content:''; position:absolute; inset:0; background: linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.6) 55%, var(--bg) 100%); }
+  .hero-video-wrap::before{ content:''; position:absolute; inset:0; z-index:2; background: radial-gradient(ellipse 55% 45% at 78% 22%, rgba(203,168,108,0.16), transparent 65%); }
+
+  @media(max-width:760px){ .hero-badge{ display:none; } }
+
+  .hero-inner{ position:relative; z-index:3; max-width:820px; }
+  .hero-eyebrow{ overflow:hidden; margin-bottom:24px; }
+  .hero-eyebrow span{ display:inline-block; font-size:0.76rem; letter-spacing:0.22em; color:var(--gold); text-transform:uppercase; transform:translateY(120%); }
+  .hero h1{ font-size: clamp(2.7rem, 7vw, 6rem); line-height:1.02; font-weight:400; max-width:15ch; }
+  .hero h1 .line{ overflow:hidden; display:block; }
+  .hero h1 .line span{ display:inline-block; transform:translateY(115%); }
+  .hero h1 i{ font-style:italic; color:var(--gold); }
+  .hero p{ margin-top:30px; max-width:44ch; color:var(--ivory-dim); font-size:1.05rem; line-height:1.8; opacity:0; }
+  .hero-actions{ margin-top:42px; display:flex; gap:26px; align-items:center; flex-wrap:wrap; opacity:0; }
+
+  .btn-primary{
+    background:var(--ivory); color:var(--bg);
+    padding:17px 36px; font-size:0.76rem; letter-spacing:0.1em; text-transform:uppercase;
+    display:inline-block; border-radius:100px;
+    transition: background 0.35s ease, transform 0.35s var(--ease);
+  }
+  .btn-primary:hover{ background:var(--gold); }
+  .hero-phone{ display:flex; align-items:center; gap:10px; font-size:0.95rem; color:var(--ivory); }
+  .hero-phone svg{ width:18px; height:18px; stroke:var(--ivory); transition:stroke 0.3s ease; }
+  .hero-phone:hover svg{ stroke:var(--gold); }
+  .hero-phone:hover{ color:var(--gold); }
+  @media(max-width:600px){
+    .hero-actions{ gap:18px; flex-direction:column; align-items:flex-start; }
+    .btn-primary{ padding:15px 28px; font-size:0.7rem; }
+    .hero-phone{ font-size:0.85rem; }
+  }
+
+  body.intro-locked{ overflow:hidden; height:100vh; }
+  .intro-scroll-hint{
+    position:absolute; bottom:44px; left:50%; transform:translateX(-50%);
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    font-size:0.64rem; letter-spacing:0.24em; color:var(--ivory-dim); text-transform:uppercase; opacity:0;
+  }
+  .intro-scroll-hint svg{ width:15px; height:15px; animation: hintBounce 1.8s ease-in-out infinite; }
+  @keyframes hintBounce{ 0%,100%{ transform:translateY(0); opacity:0.5; } 50%{ transform:translateY(7px); opacity:1; } }
+
+  /* ================= SHARED SECTION ================= */
+  section{ padding: var(--sp-section) var(--sp-pad); position:relative; }
+  .section-alt{ background:var(--bg-2); }
+  .section-head{ max-width:640px; margin-bottom:clamp(60px,7vw,100px); }
+  .kicker{ font-size:0.72rem; letter-spacing:0.2em; color:var(--gold); margin-bottom:20px; text-transform:uppercase; overflow:hidden; display:flex; align-items:center; gap:12px; }
+  .kicker span{ display:inline-block; }
+  .section-head h2{ font-size:clamp(2.1rem, 4.4vw, 3.6rem); line-height:1.12; font-weight:400; }
+  .section-head h2 i{ font-style:italic; color:var(--gold); }
+  h2 i, h3 i{ font-style:italic; color:var(--gold); }
+
+  /* ================= SERVICES — curated editorial grid ================= */
+  .services-grid{
+    display:grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-areas:
+      "s1 s1 s1 s1 s1 s1 s2 s2 s2 s2 s2 s2"
+      "s1 s1 s1 s1 s1 s1 s3 s3 s3 s3 s3 s3"
+      "s4 s4 s4 s4 s4 s5 s5 s5 s5 s5 s5 s5"
+      "s6 s6 s6 s6 s6 s6 s6 s6 s6 s6 s6 s6";
+    grid-template-rows: 210px 210px 300px 240px;
+    gap:20px;
+  }
+  .service-card{ position:relative; overflow:hidden; display:block; border-radius:22px; }
+  .service-card.s1{ grid-area:s1; }
+  .service-card.s2{ grid-area:s2; }
+  .service-card.s3{ grid-area:s3; }
+  .service-card.s4{ grid-area:s4; }
+  .service-card.s5{ grid-area:s5; }
+  .service-card.s6{ grid-area:s6; }
+
+  .service-card .img-bg{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    transform:scale(1.1); transition: transform 1.1s var(--ease-soft), filter 0.5s ease;
+    filter:brightness(0.68) saturate(0.9);
+  }
+  .service-card:hover .img-bg{ transform:scale(1.0); filter:brightness(0.48) saturate(1.05); }
+  .service-card::before{ content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(180deg, rgba(10,9,8,0.1) 20%, rgba(10,9,8,0.94) 100%); }
+  .service-content{ position:absolute; left:0; right:0; bottom:0; z-index:2; padding:28px 30px; }
+  .service-content h3{ font-size:1.4rem; margin-bottom:6px; transition: transform 0.4s var(--ease); }
+  .service-card:hover .service-content h3{ transform:translateX(4px); }
+  .service-tagline{ font-size:0.82rem; font-style:italic; color:var(--gold); font-family:'Fraunces', serif; margin-bottom:10px; }
+  .service-desc{
+    font-size:0.83rem; color:var(--ivory-dim); line-height:1.55; max-width:38ch;
+    max-height:0; opacity:0; overflow:hidden; transition: max-height 0.5s var(--ease), opacity 0.4s ease, margin 0.4s ease;
+  }
+  .service-card:hover .service-desc{ max-height:100px; opacity:1; margin-bottom:12px; }
+  .service-link{
+    display:inline-flex; align-items:center; gap:9px;
+    font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--bg);
+    background:var(--gold); border-radius:100px; padding:11px 20px;
+    transition: background 0.35s ease, transform 0.35s var(--ease);
+  }
+  .service-card:hover .service-link{ background:var(--ivory); transform:translateY(-2px); }
+  .service-link i{ font-style:normal; display:inline-block; transition:transform 0.4s var(--ease); }
+  .service-card:hover .service-link i{ transform:translateX(4px); }
+
+  /* s1 (large hero card) gets more room + always-visible copy */
+  .service-card.s1 .service-content{ padding:36px; max-width:80%; }
+  .service-card.s1 h3{ font-size:1.9rem; }
+  .service-card.s1 .service-desc{ max-height:100px; opacity:1; margin-bottom:14px; }
+
+  @media(max-width:900px){
+    .services-grid{ display:block; }
+    .service-card{
+      height:360px; border-radius:24px;
+      position:sticky; top:90px;
+      box-shadow:0 10px 24px rgba(0,0,0,0.18);
+      margin-bottom:24px;
+    }
+    .service-card.s1{ top:90px; }
+    .service-card.s2{ top:110px; }
+    .service-card.s3{ top:130px; }
+    .service-card.s4{ top:150px; }
+    .service-card.s5{ top:170px; }
+    .service-card.s6{ top:190px; }
+    .service-card.s1 .service-content{ max-width:100%; }
+    .service-desc{ max-height:100px; opacity:1; margin-bottom:12px; }
+  }
+
+  /* ================= DOCTOR / PHILOSOPHY — dark card inset on light section ================= */
+  .science{ }
+  .science-card{
+    background:var(--bg-2); border-radius:28px; padding:clamp(30px,4.5vw,56px);
+  }
+  .science-grid{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,6vw,90px); align-items:center; }
+  .science-content h2{ font-size:clamp(2.1rem, 4vw, 3.2rem); line-height:1.15; }
+  .science-img-wrap{ position:relative; }
+  .science-img{
+    position:relative; aspect-ratio:4/5; border-radius:22px; overflow:hidden;
+    isolation:isolate; transform:translateZ(0);
+  }
+  .science-img img{ width:100%; height:100%; object-fit:cover; filter:saturate(0.9) brightness(0.85); border-radius:22px; display:block; }
+
+  /* single consolidated stats card, fully inset within the image */
+  .science-stats{
+    position:absolute; right:24px; bottom:30px; left:24px; z-index:2;
+    display:flex; align-items:stretch; justify-content:space-between; border-radius:14px; overflow:hidden;
+    background:rgba(6,5,4,0.55) !important; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(244,237,226,0.14) !important;
+    box-shadow:none !important;
+  }
+  .stat-card{
+    flex:1; padding:14px 8px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; text-align:center;
+    border-radius:0;
+  }
+  .stat-card + .stat-card{ border-left:1px solid rgba(244,237,226,0.14); }
+  .stat{ display:flex; flex-direction:column; align-items:center; }
+  .stat b{ display:block; font-family:'Fraunces', serif; font-weight:400; color:var(--gold); }
+  .stat span{ display:block; color:var(--ivory-dim); letter-spacing:0.02em; white-space:nowrap; }
+  .stat-card .stat b{ font-size:1.15rem; line-height:1.25; }
+  .stat-card .stat span{ font-size:0.6rem; letter-spacing:0.03em; }
+  .doctor-line{ margin-top:28px; font-size:0.72rem; letter-spacing:0.16em; color:var(--gold); text-transform:uppercase; }
+  .check-list{ list-style:none; margin-top:24px; display:flex; flex-direction:column; gap:13px; }
+  .check-list li{ font-size:0.95rem; color:var(--ivory-dim); padding-left:28px; position:relative; }
+  .check-list li::before{ content:'✓'; position:absolute; left:0; color:var(--gold); }
+  .science-content .btn-primary{ display:inline-block; margin-top:36px; }
+  @media(max-width:900px){
+    .science-grid{ grid-template-columns:1fr; gap:56px; }
+    .science-img-wrap{ order:-1; }
+    .science-stats{ left:16px; right:16px; bottom:22px; }
+    .stat-card{ padding:10px 4px; }
+    .stat-card .stat b{ font-size:0.95rem; }
+    .stat-card .stat span{ font-size:0.54rem; }
+    .doctor-line{ margin-top:20px; }
+    .check-list{ margin-top:16px; gap:10px; }
+    .science-content .btn-primary{ margin-top:22px; margin-bottom:16px; }
+  }
+
+  /* ================= RESULTS — before/after sliders ================= */
+  .results-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  }
+  .ba-card{ position:relative; border-radius:20px; overflow:hidden; aspect-ratio:16/11; user-select:none; cursor:ew-resize; touch-action:pan-y; }
+  .ba-card .ba-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+  .ba-card .ba-after{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .ba-card .ba-before-wrap{ position:absolute; inset:0; overflow:hidden; clip-path: inset(0 50% 0 0); pointer-events:none; }
+  .ba-tag{
+    position:absolute; top:16px; font-size:0.66rem; letter-spacing:0.1em; text-transform:uppercase;
+    padding:6px 12px; border-radius:100px; z-index:3; color:var(--ivory); pointer-events:none;
+    transition: opacity 0.25s ease;
+  }
+  .ba-tag.before{ left:16px; }
+  .ba-tag.after{ right:16px; }
+  .ba-handle{
+    position:absolute; top:0; bottom:0; width:2px; background:var(--gold); left:50%; z-index:4;
+    transform:translateX(-50%); box-shadow:0 0 12px rgba(203,168,108,0.6); pointer-events:none;
+  }
+  .ba-handle::after{
+    content:'⟷'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:42px; height:42px; border-radius:50%; background:var(--gold); color:var(--bg);
+    display:flex; align-items:center; justify-content:center; font-size:1rem;
+  }
+  .ba-label{
+    position:absolute; left:18px; bottom:16px; z-index:3; font-size:0.85rem; letter-spacing:0.02em;
+    padding:9px 16px; border-radius:100px; pointer-events:none;
+  }
+  @media(max-width:980px){ .results-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:600px){ .results-grid{ grid-template-columns:1fr; } }
+  .results-note{ margin-top:30px; text-align:center; font-size:0.78rem; color:var(--ivory-dim); }
+
+  /* ================= BOOKING ================= */
+  .booking{ position:relative; overflow:hidden; }
+  .booking::before{
+    content:''; position:absolute; inset:0; z-index:0;
+    background: radial-gradient(ellipse 50% 60% at 15% 30%, rgba(203,168,108,0.07), transparent 65%);
+  }
+  .booking-grid{ position:relative; z-index:1; display:grid; grid-template-columns:0.85fr 1.15fr; gap:clamp(40px,6vw,90px); }
+  .booking-intro h2{ font-size:clamp(2.1rem, 4.2vw, 3.4rem); line-height:1.14; }
+  .booking-intro p{ margin-top:20px; color:var(--ivory-dim); line-height:1.85; max-width:38ch; }
+  .booking-perks{ display:flex; flex-direction:column; gap:17px; margin-top:40px; }
+  .perk{ display:flex; align-items:center; gap:13px; font-size:0.86rem; color:var(--ivory-dim); }
+  .perk svg{ width:18px; height:18px; color:var(--gold); flex-shrink:0; }
+
+  .booking-form{
+    border-radius:26px; padding:clamp(28px,4vw,48px); display:flex; flex-direction:column; gap:22px;
+  }
+  .field{ position:relative; }
+  .field label{
+    position:absolute; left:18px; top:17px; font-size:0.92rem; color:var(--ivory-dim);
+    pointer-events:none; transition: all 0.3s var(--ease); background:transparent;
+  }
+  .field input, .field select, .field textarea{
+    width:100%; background:rgba(244,237,226,0.03); border:1px solid var(--glass-border); border-radius:12px; color:var(--ivory);
+    padding:26px 18px 10px; font-family:'Manrope',sans-serif; font-size:0.95rem; font-weight:300;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:var(--gold); box-shadow:0 0 0 4px rgba(203,168,108,0.1);
+  }
+  .field input:focus + label, .field input:not(:placeholder-shown) + label,
+  .field select:focus + label, .field select.filled + label,
+  .field textarea:focus + label, .field textarea:not(:placeholder-shown) + label{
+    top:9px; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold);
+  }
+  .field select{ -webkit-appearance:none; -moz-appearance:none; appearance:none; color:var(--ivory-dim); cursor:pointer; padding-right:44px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%239b9186' stroke-width='1.4' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 18px center; background-size:14px 9px; }
+  .field select::-ms-expand{ display:none; }
+  .field select option{ background:var(--bg-3); color:var(--ivory); }
+  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .field textarea{ resize:vertical; min-height:90px; }
+  .booking-form .btn-primary{ border:none; cursor:pointer; margin-top:6px; width:100%; text-align:center; }
+  @media(max-width:860px){ .booking-grid{ grid-template-columns:1fr; gap:56px; } .form-row{ grid-template-columns:1fr; } }
+
+  /* light booking form — solid, warm-bordered inputs instead of dark glass */
+  .light .field input, .light .field select, .light .field textarea{
+    background-color:rgba(255,255,255,0.7); border-color:rgba(36,31,27,0.15); color:var(--page-ink);
+  }
+  .light .field select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236e6357' stroke-width='1.4' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 18px center; background-size:14px 9px;
+  }
+  .light .field select option{ background:#fff; color:var(--page-ink); }
+  .light .field label{ color:var(--page-ink-dim); }
+
+  /* ================= SERVICE DETAIL MODAL ================= */
+  .service-card{ cursor:pointer; }
+  .modal-overlay{
+    position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center;
+    padding:24px; background:rgba(6,5,4,0.72); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    opacity:0; visibility:hidden; transition: opacity 0.35s ease, visibility 0.35s ease;
+  }
+  .modal-overlay.open{ opacity:1; visibility:visible; }
+  .modal-panel{
+    position:relative; width:100%; max-width:880px; max-height:88vh; overflow-y:auto;
+    border-radius:26px; display:grid; grid-template-columns:0.85fr 1.15fr;
+    transform:translateY(24px) scale(0.98); transition: transform 0.4s var(--ease);
+    box-shadow:0 40px 100px rgba(0,0,0,0.5);
+  }
+  .modal-overlay.open .modal-panel{ transform:translateY(0) scale(1); }
+  .modal-close{
+    position:absolute; top:16px; right:16px; z-index:2; width:38px; height:38px; border-radius:50%;
+    background:rgba(6,5,4,0.5); border:1px solid rgba(244,237,226,0.2); color:var(--ivory);
+    font-size:0.9rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition: background 0.3s ease;
+  }
+  .modal-close:hover{ background:var(--gold); color:var(--bg); }
+  .modal-img{ position:relative; min-height:220px; }
+  .modal-img img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .modal-body{ padding:clamp(28px,4vw,44px); }
+  .modal-body h3{ font-size:clamp(1.6rem,3vw,2.1rem); margin-top:4px; }
+  .modal-desc{ margin-top:16px; color:var(--ivory-dim); line-height:1.75; font-size:0.94rem; }
+  .modal-plans{ margin-top:26px; display:flex; flex-direction:column; gap:12px; }
+  .plan-row{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:16px 18px; border-radius:14px; border:1px solid rgba(244,237,226,0.12);
+    background:rgba(244,237,226,0.03); position:relative;
+  }
+  .plan-row.popular{ border-color:rgba(203,168,108,0.5); background:rgba(203,168,108,0.07); }
+  .plan-row .plan-badge{
+    position:absolute; top:-10px; left:16px; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    background:var(--gold); color:var(--bg); padding:3px 10px; border-radius:100px;
+  }
+  .plan-name{ font-family:'Fraunces', serif; font-size:1.02rem; }
+  .plan-desc{ font-size:0.78rem; color:var(--ivory-dim); margin-top:3px; max-width:32ch; }
+  .plan-price{ font-family:'Fraunces', serif; font-size:1.15rem; color:var(--gold); white-space:nowrap; }
+  .modal-body .btn-primary{ display:inline-block; margin-top:28px; }
+  @media(max-width:760px){
+    .modal-panel{ grid-template-columns:1fr; max-height:92vh; }
+    .modal-img{ min-height:180px; }
+    .plan-row{ flex-direction:column; align-items:flex-start; gap:6px; }
+  }
+
+  /* ================= FOOTER — minimal single bar ================= */
+  footer{
+    padding:28px var(--sp-pad);
+    display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;
+    border-top:1px solid var(--line);
+  }
+  .footer-brand{ display:flex; align-items:center; gap:10px; font-family:'Fraunces', serif; font-size:1.1rem; letter-spacing:0.01em; }
+  .footer-brand svg{ width:16px; height:16px; color:var(--gold); }
+  footer nav ul{ list-style:none; display:flex; gap:clamp(14px,2.4vw,32px); flex-wrap:wrap; }
+  footer nav a{ font-size:0.76rem; letter-spacing:0.04em; color:var(--ivory-dim); transition:color 0.3s ease; }
+  footer nav a:hover{ color:var(--gold); }
+  .footer-social{ display:flex; align-items:center; gap:16px; }
+  .footer-social a{ width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--line); color:var(--ivory-dim); transition: all 0.3s ease; }
+  .footer-social a:hover{ color:var(--bg); background:var(--gold); border-color:var(--gold); }
+  .footer-social svg{ width:14px; height:14px; }
+  .foot-bottom{
+    width:100%; margin-top:20px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:0.72rem; color:var(--ivory-dim); letter-spacing:0.03em;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+  }
+  @media(max-width:760px){ footer{ flex-direction:column; align-items:flex-start; } footer nav ul{ gap:14px 22px; } }
+</style>
+</head>
+<body class="intro-locked">
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"><span id="cursor-label"></span></div>
+  <div id="grain"></div>
+  <div id="ambient"></div>
+
+  <div id="intro">
+    <div class="intro-mark">
+      <div class="intro-word"><span>MAISON</span></div>
+      <div class="intro-word"><span class="accent">Véra</span></div>
+    </div>
+    <div class="intro-progress"></div>
+    <div class="intro-scroll-hint">
+      Scroll to Enter
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </div>
+
+  <div class="nav-wrap">
+    <header class="glass">
+      <div class="logo">Maison Véra</div>
+      <nav>
+        <ul>
+          <li><a href="#philosophy">About</a></li>
+          <li><a href="#treatments">Treatments</a></li>
+          <li><a href="#treatments">Services</a></li>
+          <li><a href="#results">Before &amp; After</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <div class="nav-right">
+        <a href="tel:+12125550142" class="nav-phone hover-target">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>(212) 555-0142</span>
+        </a>
+        <a href="#contact" class="nav-book hover-target">Book Consultation</a>
+      </div>
+    </header>
+  </div>
+
+  <section class="hero">
+    <div class="hero-video-wrap">
+      <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1600334129128-685c5582fd35?q=80&w=1974&auto=format&fit=crop">
+        <source src="https://assets.mixkit.co/videos/52158/52158-720.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow"><span>Private Aesthetic Studio · Downtown</span></div>
+      <h1>
+        <div class="line"><span>Skin, treated</span></div>
+        <div class="line"><span>like <i>fine material.</i></span></div>
+      </h1>
+      <p>Injectables, laser, and skin therapy performed with a surgeon's precision and a sculptor's restraint. No overcorrection. No trends. Just quiet, deliberate results.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary hover-target"><span>Reserve a Consultation</span></a>
+        <a href="tel:+12125550142" class="hero-phone hover-target">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          (212) 555-0142
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="treatments" class="light">
+    <div class="section-head reveal">
+      <div class="kicker"><span>Our Treatments</span></div>
+      <h2>Treatments,<br><i>thoughtfully tailored.</i></h2>
+      <p style="margin-top:22px; color:var(--ivory-dim); line-height:1.85; max-width:52ch;">From subtle facial refinement to advanced skin rejuvenation, every treatment is selected around your features, goals, and desired outcome.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card s1 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('botox')">
+        <div class="img-bg" style="background-image:url('images/services/botox-neuromodulators.jpg')"></div>
+        <div class="service-content">
+          <h3>Botox &amp; Neuromodulators</h3>
+          <p class="service-tagline">Soften. Refine. Refresh.</p>
+          <p class="service-desc">Thoughtfully placed to soften expression lines while preserving your natural character.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+      <div class="service-card s2 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('fillers')">
+        <div class="img-bg" style="background-image:url('images/services/dermal-fillers.jpg')"></div>
+        <div class="service-content">
+          <h3>Dermal Fillers</h3>
+          <p class="service-tagline">Restore natural definition.</p>
+          <p class="service-desc">Enhance facial balance, restore lost volume, and refine your features with subtle, natural-looking results.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+      <div class="service-card s3 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('skin')">
+        <div class="img-bg" style="background-image:url('images/services/skin-rejuvenation.jpg')"></div>
+        <div class="service-content">
+          <h3>Skin Rejuvenation</h3>
+          <p class="service-tagline">Renew your skin.</p>
+          <p class="service-desc">Improve tone, texture, clarity, and overall skin quality with treatments tailored to your skin.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+      <div class="service-card s4 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('laser')">
+        <div class="img-bg" style="background-image:url('images/services/laser-treatments.jpg')"></div>
+        <div class="service-content">
+          <h3>Laser Treatments</h3>
+          <p class="service-tagline">Advanced skin transformation.</p>
+          <p class="service-desc">Target pigmentation, texture, redness, and other skin concerns with precision.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+      <div class="service-card s5 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('body')">
+        <div class="img-bg" style="background-image:url('images/services/body-contouring.jpg')"></div>
+        <div class="service-content">
+          <h3>Body Contouring</h3>
+          <p class="service-tagline">Refine your silhouette.</p>
+          <p class="service-desc">Non-surgical treatments designed to sculpt, smooth, and enhance your natural contours.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+      <div class="service-card s6 dark-surface hover-target cursor-explore reveal" onclick="openServiceModal('facial')">
+        <div class="img-bg" style="background-image:url('images/services/facial-treatments.jpg')"></div>
+        <div class="service-content">
+          <h3>Facial Treatments</h3>
+          <p class="service-tagline">Your skin, elevated.</p>
+          <p class="service-desc">Bespoke facial treatments designed to restore hydration, luminosity, and healthy-looking skin.</p>
+          <span class="service-link">Explore Treatment <i>→</i></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Service detail modal -->
+  <div id="service-modal-overlay" class="modal-overlay">
+    <div class="modal-panel dark-surface" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button type="button" class="modal-close hover-target" onclick="closeServiceModal()" aria-label="Close">✕</button>
+      <div class="modal-img"><img id="modal-img" src="" alt=""></div>
+      <div class="modal-body">
+        <div class="kicker"><span id="modal-tagline"></span></div>
+        <h3 id="modal-title"></h3>
+        <p id="modal-desc" class="modal-desc"></p>
+        <div class="modal-plans" id="modal-plans"></div>
+        <a href="#contact" class="btn-primary hover-target" onclick="closeServiceModal()"><span>Book This Treatment →</span></a>
+      </div>
+    </div>
+  </div>
+
+
+  <section class="science light" id="philosophy">
+    <div class="science-card dark-surface">
+      <div class="science-grid">
+        <div class="science-content reveal">
+          <div class="kicker"><span>Expert Care. Thoughtful Results.</span></div>
+          <h2>A Backed Approach<br>to <i>Beauty</i></h2>
+          <p style="margin-top:24px; color:var(--ivory-dim); line-height:1.85; max-width:44ch;">At Maison Véra, we combine medical expertise with the latest technology to deliver safe, effective, and natural-looking results.</p>
+          <div class="doctor-line">Dr. A. Moreau, Medical Director</div>
+          <ul class="check-list">
+            <li>Board-Certified Aesthetic Physician</li>
+            <li>Advanced Training &amp; Expertise</li>
+            <li>Personalized Treatment Plans</li>
+            <li>Compassionate, Client-Focused Care</li>
+          </ul>
+          <a href="#contact" class="btn-primary hover-target"><span>Meet Our Doctor →</span></a>
+        </div>
+        <div class="science-img-wrap reveal">
+          <div class="science-img">
+            <img src="images/doctor/doctor-portrait.jpg" alt="Dr. Moreau">
+          </div>
+          <div class="science-stats glass">
+            <div class="stat-card">
+              <div class="stat"><b>12+</b><span>Experience</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat"><b>4,200+</b><span>Treatments</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="stat"><b>98%</b><span>Satisfaction</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="light">
+    <div class="section-head reveal">
+      <div class="kicker"><span>Real Results</span></div>
+      <h2>Natural beauty,<br><i>real confidence.</i></h2>
+    </div>
+    <div class="results-grid reveal">
+      <div class="ba-card dark-surface hover-target">
+        <img class="ba-img ba-after" src="images/results/skin-rejuvenation-after.jpg" alt="After">
+        <div class="ba-before-wrap"><img class="ba-img" src="images/results/skin-rejuvenation-before.jpg" alt="Before"></div>
+        <span class="ba-tag before glass">Before</span>
+        <span class="ba-tag after glass">After</span>
+        <div class="ba-handle"></div>
+        <span class="ba-label glass">Skin Rejuvenation</span>
+      </div>
+      <div class="ba-card dark-surface hover-target">
+        <img class="ba-img ba-after" src="images/results/jawline-contouring-after.jpg" alt="After">
+        <div class="ba-before-wrap"><img class="ba-img" src="images/results/jawline-contouring-before.jpg" alt="Before"></div>
+        <span class="ba-tag before glass">Before</span>
+        <span class="ba-tag after glass">After</span>
+        <div class="ba-handle"></div>
+        <span class="ba-label glass">Jawline Contouring</span>
+      </div>
+      <div class="ba-card dark-surface hover-target">
+        <img class="ba-img ba-after" src="images/results/facial-balancing-after.jpg" alt="After">
+        <div class="ba-before-wrap"><img class="ba-img" src="images/results/facial-balancing-before.jpg" alt="Before"></div>
+        <span class="ba-tag before glass">Before</span>
+        <span class="ba-tag after glass">After</span>
+        <div class="ba-handle"></div>
+        <span class="ba-label glass">Facial Balancing</span>
+      </div>
+    </div>
+    <p class="results-note">Drag the slider to compare. Results may vary from person to person.</p>
+  </section>
+
+  <section class="booking light" id="contact">
+    <div class="booking-grid">
+      <div class="booking-intro reveal">
+        <div class="kicker"><span>Get Started</span></div>
+        <h2>Ready to Reveal<br><i>Your Best Self?</i></h2>
+        <p>Book your consultation today and take the first step toward a confident, radiant you.</p>
+        <div class="booking-perks">
+          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg>Private &amp; Confidential</div>
+          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>No-Pressure Consultation</div>
+          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Flexible Scheduling</div>
+        </div>
+      </div>
+      <form class="booking-form glass reveal" onsubmit="return false;">
+        <div class="field"><input type="text" placeholder=" " required><label>Full Name</label></div>
+        <div class="form-row">
+          <div class="field"><input type="tel" placeholder=" " required><label>Phone Number</label></div>
+          <div class="field"><input type="email" placeholder=" " required><label>Email Address</label></div>
+        </div>
+        <div class="field">
+          <select onchange="this.classList.add('filled')">
+            <option value="" disabled selected hidden></option>
+            <option>Botox &amp; Neuromodulators</option>
+            <option>Dermal Fillers</option>
+            <option>Skin Rejuvenation</option>
+            <option>Laser Treatments</option>
+            <option>Body Contouring</option>
+            <option>Facial Treatments</option>
+          </select>
+          <label>Treatment Interest</label>
+        </div>
+        <div class="field"><textarea rows="3" placeholder=" "></textarea><label>Message (Optional)</label></div>
+        <button type="submit" class="btn-primary hover-target"><span>Book Appointment →</span></button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>
+      Maison Véra
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#philosophy">About</a></li>
+        <li><a href="#treatments">Treatments</a></li>
+        <li><a href="#treatments">Services</a></li>
+        <li><a href="#results">Before &amp; After</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="footer-social">
+      <a href="#" class="hover-target" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="#" class="hover-target" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+      <a href="#" class="hover-target" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg></a>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Maison Véra Aesthetic Studio. All rights reserved.</span>
+      <span>Privacy — Terms</span>
+    </div>
+  </footer>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* custom cursor */
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+const label = document.getElementById('cursor-label');
+let mx=0,my=0, rx=0, ry=0;
+window.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+gsap.ticker.add(()=>{ rx += (mx-rx)*0.16; ry += (my-ry)*0.16; ring.style.left=rx+'px'; ring.style.top=ry+'px'; });
+document.querySelectorAll('.hover-target').forEach(el=>{
+  const text = el.classList.contains('cursor-explore') ? 'Explore' : el.classList.contains('cursor-view') ? 'View' : '';
+  el.addEventListener('mouseenter', ()=>{ ring.classList.add('grow'); label.textContent = text; });
+  el.addEventListener('mouseleave', ()=>{ ring.classList.remove('grow'); label.textContent=''; });
+});
+
+/* nav opacity on scroll */
+const headerEl = document.querySelector('header');
+ScrollTrigger.create({
+  start: 60, end: 99999,
+  onUpdate: self => headerEl.classList.toggle('scrolled', self.scroll() > 60)
+});
+
+/* intro sequence */
+const introTl = gsap.timeline({ delay:0.2 });
+introTl
+  .to('.intro-mark span', { y:'0%', duration:1, ease:'expo.out', stagger:0.08 })
+  .add(()=>{ document.querySelector('.intro-progress').classList.add('animate'); }, 0.3)
+  .to('.intro-scroll-hint', { opacity:1, duration:0.8 }, 1.1);
+
+function exitIntro(){
+  window.removeEventListener('wheel', exitIntro);
+  window.removeEventListener('touchmove', exitIntro);
+  window.removeEventListener('keydown', onKeyExit);
+  const exitTl = gsap.timeline();
+  exitTl
+    .to('#intro', { opacity:0, duration:0.9, ease:'power2.inOut' })
+    .set('#intro', { visibility:'hidden' })
+    .add(()=>{ document.body.classList.remove('intro-locked'); })
+    .to('.nav-wrap', { opacity:1, duration:0.8 }, '-=0.6')
+    .to('.hero-eyebrow span', { y:'0%', duration:0.9, ease:'expo.out' }, '-=0.4')
+    .to('.hero h1 .line span', { y:'0%', duration:1.1, ease:'expo.out', stagger:0.12 }, '-=0.6')
+    .to('.hero p', { opacity:1, duration:0.9 }, '-=0.6')
+    .to('.hero-actions', { opacity:1, duration:0.9 }, '-=0.7');
+}
+function onKeyExit(e){ if(['ArrowDown','PageDown',' '].includes(e.key)) exitIntro(); }
+window.addEventListener('wheel', exitIntro, { passive:true });
+window.addEventListener('touchmove', exitIntro, { passive:true });
+window.addEventListener('keydown', onKeyExit);
+
+/* scroll reveals */
+gsap.from('.section-head', { y:30, opacity:0, duration:1, ease:'power3.out',
+  scrollTrigger:{ trigger:'.section-head', start:'top 85%' } });
+gsap.utils.toArray('.service-card').forEach((card,i)=>{
+  gsap.from(card, { y:50, opacity:0, duration:0.9, ease:'power3.out', delay:(i%4)*0.08,
+    scrollTrigger:{ trigger: card, start:'top 90%' } });
+});
+gsap.from('.science-content > *', { y:30, opacity:0, duration:1, ease:'power3.out', stagger:0.1,
+  scrollTrigger:{ trigger:'.science-content', start:'top 80%' } });
+gsap.utils.toArray('.ba-card').forEach((card,i)=>{
+  gsap.from(card, { y:40, opacity:0, duration:0.8, ease:'power3.out', delay:(i%2)*0.1,
+    scrollTrigger:{ trigger: card, start:'top 90%' } });
+});
+gsap.from('.booking-intro > *', { y:30, opacity:0, duration:1, ease:'power3.out', stagger:0.1,
+  scrollTrigger:{ trigger:'.booking-intro', start:'top 80%' } });
+gsap.from('.booking-form', { y:40, opacity:0, duration:1, ease:'power3.out',
+  scrollTrigger:{ trigger:'.booking-form', start:'top 85%' } });
+
+if(!reduced){
+  /* cinematic slow zoom on hero video */
+  gsap.to('.hero-video-wrap video', { scale:1, duration:14, ease:'none' });
+  gsap.to('.hero-video-wrap video', { yPercent:12, ease:'none',
+    scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true } });
+
+  /* doctor image parallax — moves slower than text */
+  gsap.to('.science-img img', { yPercent:-6, ease:'none',
+    scrollTrigger:{ trigger:'.science', start:'top bottom', end:'bottom top', scrub:true } });
+
+  gsap.utils.toArray('.service-card .img-bg').forEach(img=>{
+    gsap.to(img, { scale:1.0, ease:'none',
+      scrollTrigger:{ trigger: img, start:'top bottom', end:'bottom top', scrub:true } });
+  });
+}
+
+/* service detail modal */
+const servicesData = {
+  botox: {
+    title: 'Botox & Neuromodulators',
+    tagline: 'Soften. Refine. Refresh.',
+    img: 'images/services/botox-neuromodulators.jpg',
+    desc: 'Neuromodulators are thoughtfully placed to soften expression lines while preserving your natural range of movement and character. No frozen look, no overcorrection — just a rested, refreshed appearance.',
+    plans: [
+      { name: 'Single Area', price: '$350', desc: 'Forehead, glabella, or crow\'s feet — one area treated.' },
+      { name: 'Full Face', price: '$650', desc: 'Multiple areas combined for balanced, natural results.', popular: true },
+      { name: 'Maintenance Plan', price: '$1,800', desc: '3 sessions across 12 months. Best long-term value.' }
+    ]
+  },
+  fillers: {
+    title: 'Dermal Fillers',
+    tagline: 'Restore natural definition.',
+    img: 'images/services/dermal-fillers.jpg',
+    desc: 'Enhance facial balance, restore lost volume, and refine your features with subtle, natural-looking results. Every syringe is placed with an eye for proportion, not just volume.',
+    plans: [
+      { name: 'Lip Filler', price: '$495', desc: 'One syringe, natural volume and definition.' },
+      { name: 'Cheek & Midface', price: '$795', desc: 'Restore volume and lift through the midface.', popular: true },
+      { name: 'Full Facial Balancing', price: '$1,950', desc: '3 syringes across multiple areas for a cohesive result.' }
+    ]
+  },
+  skin: {
+    title: 'Skin Rejuvenation',
+    tagline: 'Renew your skin.',
+    img: 'images/services/skin-rejuvenation.jpg',
+    desc: 'Improve tone, texture, clarity, and overall skin quality with treatments tailored to your skin\'s actual needs — not a one-size-fits-all facial.',
+    plans: [
+      { name: 'Single Session', price: '$275', desc: 'A great introduction or pre-event refresh.' },
+      { name: '3-Session Course', price: '$720', desc: 'Progressive improvement in tone and texture.', popular: true },
+      { name: '6-Session Course', price: '$1,320', desc: 'Our most comprehensive renewal program.' }
+    ]
+  },
+  laser: {
+    title: 'Laser Treatments',
+    tagline: 'Advanced skin transformation.',
+    img: 'images/services/laser-treatments.jpg',
+    desc: 'Target pigmentation, texture, redness, and other skin concerns with precision. Treatment plans are calibrated to your skin type and downtime tolerance.',
+    plans: [
+      { name: 'Spot Treatment', price: '$225', desc: 'Small, targeted area — pigmentation or redness.' },
+      { name: 'Full Face', price: '$525', desc: 'Comprehensive resurfacing across the full face.', popular: true },
+      { name: '4-Session Package', price: '$1,850', desc: 'Best results come with a full course of treatment.' }
+    ]
+  },
+  body: {
+    title: 'Body Contouring',
+    tagline: 'Refine your silhouette.',
+    img: 'images/services/body-contouring.jpg',
+    desc: 'Non-surgical treatments designed to sculpt, smooth, and enhance your natural contours — for the areas that diet and training alone don\'t reach.',
+    plans: [
+      { name: 'Single Area', price: '$450', desc: 'One area treated per session (abdomen, flanks, etc).' },
+      { name: '3-Session Package', price: '$1,200', desc: 'Progressive contouring for visible results.', popular: true },
+      { name: 'Full Body Plan', price: '$2,600', desc: 'Multiple areas across a full treatment course.' }
+    ]
+  },
+  facial: {
+    title: 'Facial Treatments',
+    tagline: 'Your skin, elevated.',
+    img: 'images/services/facial-treatments.jpg',
+    desc: 'Bespoke facial treatments designed to restore hydration, luminosity, and healthy-looking skin — a quiet ritual, not a rushed treatment room visit.',
+    plans: [
+      { name: 'Signature Facial', price: '$185', desc: 'Our classic hydration and glow treatment.' },
+      { name: 'Deep Renewal Facial', price: '$285', desc: 'Includes exfoliation and targeted serums.', popular: true },
+      { name: 'Facial Membership', price: '$220/mo', desc: 'One facial monthly, with member pricing on add-ons.' }
+    ]
+  }
+};
+
+const modalOverlay = document.getElementById('service-modal-overlay');
+let lastFocusedEl = null;
+
+function openServiceModal(id){
+  const data = servicesData[id];
+  if(!data) return;
+  document.getElementById('modal-img').src = data.img;
+  document.getElementById('modal-img').alt = data.title;
+  document.getElementById('modal-tagline').textContent = data.tagline;
+  document.getElementById('modal-title').textContent = data.title;
+  document.getElementById('modal-desc').textContent = data.desc;
+
+  const plansEl = document.getElementById('modal-plans');
+  plansEl.innerHTML = data.plans.map(p => `
+    <div class="plan-row${p.popular ? ' popular' : ''}">
+      ${p.popular ? '<span class="plan-badge">Most Popular</span>' : ''}
+      <div>
+        <div class="plan-name">${p.name}</div>
+        <div class="plan-desc">${p.desc}</div>
+      </div>
+      <div class="plan-price">${p.price}</div>
+    </div>
+  `).join('');
+
+  lastFocusedEl = document.activeElement;
+  modalOverlay.classList.add('open');
+  document.body.classList.add('intro-locked');
+}
+
+function closeServiceModal(){
+  modalOverlay.classList.remove('open');
+  document.body.classList.remove('intro-locked');
+  if(lastFocusedEl) lastFocusedEl.focus();
+}
+
+modalOverlay.addEventListener('click', e => {
+  if(e.target === modalOverlay) closeServiceModal();
+});
+window.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && modalOverlay.classList.contains('open')) closeServiceModal();
+});
+
+/* before/after sliders — pointer-drag based (robust across browsers) */
+document.querySelectorAll('.ba-card').forEach(card=>{
+  const wrap = card.querySelector('.ba-before-wrap');
+  const handle = card.querySelector('.ba-handle');
+  const beforeTag = card.querySelector('.ba-tag.before');
+  const afterTag = card.querySelector('.ba-tag.after');
+  let dragging = false;
+
+  const update = pct => {
+    pct = Math.min(100, Math.max(0, pct));
+    wrap.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+    handle.style.left = pct + '%';
+    // only show the label for the image that's actually dominant right now
+    beforeTag.style.opacity = pct < 12 ? 0 : 1;
+    afterTag.style.opacity = pct > 88 ? 0 : 1;
+  };
+  const pctFromEvent = e => {
+    const rect = card.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    return (x / rect.width) * 100;
+  };
+
+  update(50);
+
+  card.addEventListener('pointerdown', e => {
+    dragging = true;
+    card.setPointerCapture(e.pointerId);
+    update(pctFromEvent(e));
+  });
+  card.addEventListener('pointermove', e => {
+    if(dragging) update(pctFromEvent(e));
+  });
+  card.addEventListener('pointerup', () => dragging = false);
+  card.addEventListener('pointercancel', () => dragging = false);
+});
+</script>
+
+</body>
+</html>
