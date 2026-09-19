@@ -371,58 +371,103 @@
   @media(max-width:600px){ .results-grid{ grid-template-columns:1fr; } }
   .results-note{ margin-top:30px; text-align:center; font-size:0.78rem; color:var(--ivory-dim); }
 
-  /* ================= BOOKING ================= */
+  /* ================= BOOKING / QUALIFIER ================= */
   .booking{ position:relative; overflow:hidden; }
   .booking::before{
     content:''; position:absolute; inset:0; z-index:0;
     background: radial-gradient(ellipse 50% 60% at 15% 30%, rgba(203,168,108,0.07), transparent 65%);
   }
-  .booking-grid{ position:relative; z-index:1; display:grid; grid-template-columns:0.85fr 1.15fr; gap:clamp(40px,6vw,90px); }
-  .booking-intro h2{ font-size:clamp(2.1rem, 4.2vw, 3.4rem); line-height:1.14; }
-  .booking-intro p{ margin-top:20px; color:var(--ivory-dim); line-height:1.85; max-width:38ch; }
-  .booking-perks{ display:flex; flex-direction:column; gap:17px; margin-top:40px; }
-  .perk{ display:flex; align-items:center; gap:13px; font-size:0.86rem; color:var(--ivory-dim); }
-  .perk svg{ width:18px; height:18px; color:var(--gold); flex-shrink:0; }
+  .qualifier-head{ position:relative; z-index:1; max-width:640px; margin:0 auto; text-align:center; }
+  .qualifier-head h2{ font-size:clamp(2.1rem, 4.2vw, 3.4rem); line-height:1.14; }
+  .qualifier-head p{ margin-top:18px; color:var(--ivory-dim); line-height:1.75; }
 
-  .booking-form{
-    border-radius:26px; padding:clamp(28px,4vw,48px); display:flex; flex-direction:column; gap:22px;
+  .qualifier-wrap{ position:relative; z-index:1; max-width:560px; margin:56px auto 0; }
+  .qualifier-card{
+    border-radius:26px; padding:clamp(28px,4vw,44px); position:relative; overflow:hidden; min-height:340px;
+    background:var(--bg-2) !important; border:1px solid rgba(244,237,226,0.1) !important;
+    box-shadow:0 30px 80px rgba(0,0,0,0.25) !important; backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
   }
+
+  .q-progress-row{ display:flex; align-items:center; gap:14px; margin-bottom:28px; }
+  .q-step-label{ font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); white-space:nowrap; }
+  .q-progress-track{ flex:1; height:3px; border-radius:100px; background:rgba(244,237,226,0.12); overflow:hidden; }
+  .q-progress-fill{ height:100%; width:20%; background:var(--gold); border-radius:100px; transition: width 0.4s var(--ease); }
+
+  .q-nav{ display:flex; gap:8px; flex-shrink:0; }
+  .q-arrow{
+    width:32px; height:32px; border-radius:50%; border:1px solid var(--glass-border); background:transparent; color:var(--ivory);
+    font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.3s ease;
+    font-family:inherit;
+  }
+  .q-arrow:hover:not(:disabled){ background:var(--gold); color:var(--bg); border-color:var(--gold); }
+  .q-arrow:disabled{ opacity:0.25; cursor:not-allowed; }
+
+  .q-step{ display:none; animation: qFadeIn 0.4s var(--ease); }
+  .q-step.active{ display:block; }
+  @keyframes qFadeIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .q-step h3{ font-size:clamp(1.3rem,2.6vw,1.6rem); line-height:1.3; margin-bottom:22px; }
+
+  .q-options{ display:flex; flex-direction:column; gap:12px; }
+  .q-option{
+    width:100%; text-align:left; padding:16px 20px; border-radius:14px; border:1px solid var(--glass-border);
+    background:rgba(244,237,226,0.03); color:var(--ivory); font-family:'Manrope',sans-serif; font-size:0.95rem;
+    cursor:pointer; transition: all 0.3s ease;
+  }
+  .q-option:hover{ border-color:var(--gold); background:rgba(203,168,108,0.06); }
+  .q-option.selected{ border-color:var(--gold); background:rgba(203,168,108,0.12); color:var(--gold); }
+
+  .q-fields{ display:flex; flex-direction:column; gap:18px; margin-bottom:24px; }
+  .q-submit{ width:100%; border:none; cursor:pointer; }
+  .q-submit:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .q-result{ text-align:center; }
+  .q-result h3{ font-size:clamp(1.4rem,2.8vw,1.8rem); margin-top:6px; }
+  .q-price-range{ font-family:'Fraunces', serif; font-size:clamp(2.2rem,5vw,3rem); color:var(--gold); margin-top:14px; }
+  .q-price-note{ margin-top:12px; color:var(--ivory-dim); font-size:0.85rem; line-height:1.6; max-width:38ch; margin-left:auto; margin-right:auto; }
+  .q-book-btn{ display:inline-block; margin-top:26px; width:100%; text-align:center; border:none; }
+  .q-financing-note{ margin-top:18px; font-size:0.8rem; color:var(--ivory-dim); }
+  .q-financing-note a{ color:var(--gold); text-decoration:underline; text-underline-offset:3px; }
+
+  .q-alt-contact{ display:flex; gap:16px; margin-top:24px; }
+  .q-alt-btn{
+    flex:1; display:flex; align-items:center; gap:12px; padding:16px 18px; border-radius:16px;
+    color:#fff; transition: transform 0.3s var(--ease), opacity 0.3s ease;
+  }
+  .q-alt-btn:hover{ transform:translateY(-2px); opacity:0.92; }
+  .q-alt-btn svg{ width:24px; height:24px; flex-shrink:0; }
+  .q-alt-btn span{ display:flex; flex-direction:column; gap:2px; }
+  .q-alt-btn b{ font-size:0.88rem; font-weight:500; }
+  .q-alt-btn small{ font-size:0.72rem; opacity:0.85; font-weight:300; }
+  .q-whatsapp{ background:#25D366; }
+  .q-sms{ background:var(--bg-2); border:1px solid var(--glass-border); }
+
+  @media(max-width:600px){
+    .q-alt-contact{ flex-direction:column; }
+    .q-progress-row{ flex-wrap:wrap; gap:10px; }
+    .q-step-label{ order:1; }
+    .q-nav{ order:2; margin-left:auto; }
+    .q-progress-track{ order:3; flex-basis:100%; }
+  }
+
+  /* light section: qualifier card stays dark for contrast against the cream background */
+  .qualifier-card{ --ivory:#f4ede2; --ivory-dim:#9b9186; --line:rgba(244,237,226,0.09); color:var(--ivory); }
+  .qualifier-card .field input{ background-color:rgba(244,237,226,0.03); border-color:var(--glass-border); color:var(--ivory); }
+  .qualifier-card .field label{ color:var(--ivory-dim); }
+
   .field{ position:relative; }
   .field label{
     position:absolute; left:18px; top:17px; font-size:0.92rem; color:var(--ivory-dim);
     pointer-events:none; transition: all 0.3s var(--ease); background:transparent;
   }
-  .field input, .field select, .field textarea{
+  .field input{
     width:100%; background:rgba(244,237,226,0.03); border:1px solid var(--glass-border); border-radius:12px; color:var(--ivory);
-    padding:26px 18px 10px; font-family:'Manrope',sans-serif; font-size:0.95rem; font-weight:300;
+    padding:26px 18px 10px; font-family:'Manrope',sans-serif; font-size:16px; font-weight:300;
     transition: border-color 0.35s ease, box-shadow 0.35s ease;
   }
-  .field input:focus, .field select:focus, .field textarea:focus{
-    outline:none; border-color:var(--gold); box-shadow:0 0 0 4px rgba(203,168,108,0.1);
-  }
-  .field input:focus + label, .field input:not(:placeholder-shown) + label,
-  .field select:focus + label, .field select.filled + label,
-  .field textarea:focus + label, .field textarea:not(:placeholder-shown) + label{
+  .field input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 4px rgba(203,168,108,0.1); }
+  .field input:focus + label, .field input:not(:placeholder-shown) + label{
     top:9px; font-size:0.66rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gold);
   }
-  .field select{ -webkit-appearance:none; -moz-appearance:none; appearance:none; color:var(--ivory-dim); cursor:pointer; padding-right:44px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%239b9186' stroke-width='1.4' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 18px center; background-size:14px 9px; }
-  .field select::-ms-expand{ display:none; }
-  .field select option{ background:var(--bg-3); color:var(--ivory); }
-  .form-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-  .field textarea{ resize:vertical; min-height:90px; }
-  .booking-form .btn-primary{ border:none; cursor:pointer; margin-top:6px; width:100%; text-align:center; }
-  @media(max-width:860px){ .booking-grid{ grid-template-columns:1fr; gap:56px; } .form-row{ grid-template-columns:1fr; } }
-
-  /* light booking form — solid, warm-bordered inputs instead of dark glass */
-  .light .field input, .light .field select, .light .field textarea{
-    background-color:rgba(255,255,255,0.7); border-color:rgba(36,31,27,0.15); color:var(--page-ink);
-  }
-  .light .field select{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%236e6357' stroke-width='1.4' fill='none'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 18px center; background-size:14px 9px;
-  }
-  .light .field select option{ background:#fff; color:var(--page-ink); }
-  .light .field label{ color:var(--page-ink-dim); }
 
   /* ================= SERVICE DETAIL MODAL ================= */
   .service-card{ cursor:pointer; }
@@ -633,7 +678,7 @@
         <h3 id="modal-title"></h3>
         <p id="modal-desc" class="modal-desc"></p>
         <div class="modal-plans" id="modal-plans"></div>
-        <a href="#contact" class="btn-primary hover-target" onclick="closeServiceModal()"><span>Book This Treatment →</span></a>
+        <a href="#contact" class="btn-primary hover-target" onclick="startQualifierFromModal(currentModalService)"><span>Check Availability →</span></a>
       </div>
     </div>
   </div>
@@ -646,7 +691,7 @@
           <div class="kicker"><span>Expert Care. Thoughtful Results.</span></div>
           <h2>A Backed Approach<br>to <i>Beauty</i></h2>
           <p style="margin-top:24px; color:var(--ivory-dim); line-height:1.85; max-width:44ch;">At Maison Véra, we combine medical expertise with the latest technology to deliver safe, effective, and natural-looking results.</p>
-          <div class="doctor-line">Dr. A. Moreau, Medical Director</div>
+          <div class="doctor-line">Dr. A. Lindqvist, Medical Director</div>
           <ul class="check-list">
             <li>Board-Certified Aesthetic Physician</li>
             <li>Advanced Training &amp; Expertise</li>
@@ -657,7 +702,7 @@
         </div>
         <div class="science-img-wrap reveal">
           <div class="science-img">
-            <img src="images/doctor/doctor-portrait.jpg" alt="Dr. Moreau">
+            <img src="images/doctor/doctor-portrait.jpg" alt="Dr. Lindqvist">
           </div>
           <div class="science-stats glass">
             <div class="stat-card">
@@ -710,38 +755,92 @@
   </section>
 
   <section class="booking light" id="contact">
-    <div class="booking-grid">
-      <div class="booking-intro reveal">
-        <div class="kicker"><span>Get Started</span></div>
-        <h2>Ready to Reveal<br><i>Your Best Self?</i></h2>
-        <p>Book your consultation today and take the first step toward a confident, radiant you.</p>
-        <div class="booking-perks">
-          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg>Private &amp; Confidential</div>
-          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>No-Pressure Consultation</div>
-          <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Flexible Scheduling</div>
+    <div class="qualifier-head reveal">
+      <div class="kicker"><span>Get Started</span></div>
+      <h2>Ready to Reveal<br><i>Your Best Self?</i></h2>
+      <p>Answer a few quick questions and see your estimated investment before booking — no surprises.</p>
+    </div>
+
+    <div class="qualifier-wrap reveal">
+      <div class="qualifier-card glass" id="qualifier-card">
+
+        <div class="q-progress-row">
+          <span class="q-step-label" id="q-step-label">Step 1 of 4</span>
+          <div class="q-progress-track"><div class="q-progress-fill" id="q-progress-fill"></div></div>
+          <div class="q-nav">
+            <button type="button" class="q-arrow" id="q-back" aria-label="Back" disabled>‹</button>
+            <button type="button" class="q-arrow" id="q-fwd" aria-label="Forward" disabled>›</button>
+          </div>
         </div>
+
+        <!-- Step 1: Service -->
+        <div class="q-step" data-step="1">
+          <h3>What service do you need?</h3>
+          <div class="q-options" data-group="service">
+            <button type="button" class="q-option" data-value="botox">Botox &amp; Neuromodulators</button>
+            <button type="button" class="q-option" data-value="fillers">Dermal Fillers</button>
+            <button type="button" class="q-option" data-value="skin">Skin Rejuvenation</button>
+            <button type="button" class="q-option" data-value="laser">Laser Treatments</button>
+            <button type="button" class="q-option" data-value="body">Body Contouring</button>
+            <button type="button" class="q-option" data-value="facial">Facial Treatments</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Timeline -->
+        <div class="q-step" data-step="2">
+          <h3>What's your timeline?</h3>
+          <div class="q-options" data-group="timeline">
+            <button type="button" class="q-option" data-value="now">Ready to book now</button>
+            <button type="button" class="q-option" data-value="month">Within the month</button>
+            <button type="button" class="q-option" data-value="researching">Just researching</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Payment -->
+        <div class="q-step" data-step="3">
+          <h3>How are you planning to pay?</h3>
+          <div class="q-options" data-group="payment">
+            <button type="button" class="q-option" data-value="full">Pay in Full</button>
+            <button type="button" class="q-option" data-value="financing">Financing</button>
+            <button type="button" class="q-option" data-value="membership">Membership Plan</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Contact -->
+        <div class="q-step" data-step="4">
+          <h3>Almost there — where should we reach you?</h3>
+          <div class="q-fields">
+            <div class="field"><input type="text" id="q-name" placeholder=" " required><label>Full Name</label></div>
+            <div class="field"><input type="tel" id="q-phone" placeholder=" " required><label>Phone Number</label></div>
+            <div class="field"><input type="email" id="q-email" placeholder=" " required><label>Email Address</label></div>
+          </div>
+          <button type="button" class="btn-primary q-submit" id="q-submit" disabled><span>See My Estimate →</span></button>
+        </div>
+
+        <!-- Step 5: Result -->
+        <div class="q-step" data-step="5">
+          <div class="q-result">
+            <div class="kicker"><span id="q-result-service"></span></div>
+            <h3 id="q-result-headline">Your Estimated Investment</h3>
+            <div class="q-price-range" id="q-price-range">$—</div>
+            <p class="q-price-note">Most clients in this category invest in this range. Your exact plan is confirmed during consultation.</p>
+            <a href="#" class="btn-primary q-book-btn" id="q-book-btn"><span>Check Availability →</span></a>
+            <p class="q-financing-note">Price higher than expected? Ask about our <a href="#" id="q-financing-link">financing options</a>.</p>
+          </div>
+        </div>
+
       </div>
-      <form class="booking-form glass reveal" onsubmit="return false;">
-        <div class="field"><input type="text" placeholder=" " required><label>Full Name</label></div>
-        <div class="form-row">
-          <div class="field"><input type="tel" placeholder=" " required><label>Phone Number</label></div>
-          <div class="field"><input type="email" placeholder=" " required><label>Email Address</label></div>
-        </div>
-        <div class="field">
-          <select onchange="this.classList.add('filled')">
-            <option value="" disabled selected hidden></option>
-            <option>Botox &amp; Neuromodulators</option>
-            <option>Dermal Fillers</option>
-            <option>Skin Rejuvenation</option>
-            <option>Laser Treatments</option>
-            <option>Body Contouring</option>
-            <option>Facial Treatments</option>
-          </select>
-          <label>Treatment Interest</label>
-        </div>
-        <div class="field"><textarea rows="3" placeholder=" "></textarea><label>Message (Optional)</label></div>
-        <button type="submit" class="btn-primary hover-target"><span>Book Appointment →</span></button>
-      </form>
+
+      <div class="q-alt-contact">
+        <a href="https://wa.me/12125550142" target="_blank" rel="noopener" class="q-alt-btn q-whatsapp hover-target" id="q-whatsapp-btn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.15c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.81-.11-.42-.13-.95-.31-1.64-.6-2.88-1.24-4.76-4.13-4.9-4.32-.14-.19-1.17-1.56-1.17-2.98 0-1.42.74-2.11 1.01-2.4.26-.29.57-.36.76-.36.19 0 .38 0 .55.01.18.01.41-.07.64.49.24.58.81 2 .88 2.14.07.14.12.31.02.5-.1.19-.15.31-.29.48-.14.17-.3.37-.43.5-.14.14-.29.29-.12.57.17.29.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.35 1.46.29.14.46.12.63-.07.17-.19.72-.84.91-1.13.19-.29.38-.24.64-.14.26.1 1.65.78 1.94.92.29.14.48.21.55.33.07.12.07.68-.17 1.35z"/></svg>
+          <span><b>WhatsApp Us</b><small>Usually replies in minutes</small></span>
+        </a>
+        <a href="sms:+12125550142" class="q-alt-btn q-sms hover-target" id="q-sms-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span><b>Text Us</b><small>(212) 555-0142</small></span>
+        </a>
+      </div>
     </div>
   </section>
 
@@ -834,10 +933,10 @@ gsap.utils.toArray('.ba-card').forEach((card,i)=>{
   gsap.from(card, { y:40, opacity:0, duration:0.8, ease:'power3.out', delay:(i%2)*0.1,
     scrollTrigger:{ trigger: card, start:'top 90%' } });
 });
-gsap.from('.booking-intro > *', { y:30, opacity:0, duration:1, ease:'power3.out', stagger:0.1,
-  scrollTrigger:{ trigger:'.booking-intro', start:'top 80%' } });
-gsap.from('.booking-form', { y:40, opacity:0, duration:1, ease:'power3.out',
-  scrollTrigger:{ trigger:'.booking-form', start:'top 85%' } });
+gsap.from('.qualifier-head > *', { y:30, opacity:0, duration:1, ease:'power3.out', stagger:0.1,
+  scrollTrigger:{ trigger:'.qualifier-head', start:'top 80%' } });
+gsap.from('.qualifier-wrap', { y:40, opacity:0, duration:1, ease:'power3.out',
+  scrollTrigger:{ trigger:'.qualifier-wrap', start:'top 85%' } });
 
 if(!reduced){
   /* cinematic slow zoom on hero video */
@@ -927,10 +1026,12 @@ const servicesData = {
 
 const modalOverlay = document.getElementById('service-modal-overlay');
 let lastFocusedEl = null;
+let currentModalService = null;
 
 function openServiceModal(id){
   const data = servicesData[id];
   if(!data) return;
+  currentModalService = id;
   document.getElementById('modal-img').src = data.img;
   document.getElementById('modal-img').alt = data.title;
   document.getElementById('modal-tagline').textContent = data.tagline;
@@ -966,6 +1067,169 @@ modalOverlay.addEventListener('click', e => {
 window.addEventListener('keydown', e => {
   if(e.key === 'Escape' && modalOverlay.classList.contains('open')) closeServiceModal();
 });
+
+/* ================= LEAD QUALIFIER ================= */
+const QUALIFIER_WEBHOOK_URL = 'https://placeholder-webhook.example.com/maison-vera-lead';
+
+// price ranges per service — spans the low tier to the high tier from servicesData plans
+const priceRanges = {
+  botox:   { label: 'Botox & Neuromodulators', low: 350,  high: 1800 },
+  fillers: { label: 'Dermal Fillers',           low: 495,  high: 1950 },
+  skin:    { label: 'Skin Rejuvenation',        low: 275,  high: 1320 },
+  laser:   { label: 'Laser Treatments',         low: 225,  high: 1850 },
+  body:    { label: 'Body Contouring',          low: 450,  high: 2600 },
+  facial:  { label: 'Facial Treatments',        low: 185,  high: 285  }
+};
+
+const qState = { step: 1, service: null, timeline: null, payment: null };
+const qCard = document.getElementById('qualifier-card');
+const qSteps = qCard.querySelectorAll('.q-step');
+const qBack = document.getElementById('q-back');
+const qFwd = document.getElementById('q-fwd');
+const qProgressFill = document.getElementById('q-progress-fill');
+const qStepLabel = document.getElementById('q-step-label');
+const TOTAL_STEPS = 4; // step 5 (result) isn't part of the counted progress
+
+function qIsStepAnswered(step){
+  if(step === 1) return !!qState.service;
+  if(step === 2) return !!qState.timeline;
+  if(step === 3) return !!qState.payment;
+  if(step === 4) return qIsContactValid();
+  return true;
+}
+
+function qIsContactValid(){
+  const name = document.getElementById('q-name').value.trim();
+  const phone = document.getElementById('q-phone').value.trim();
+  const email = document.getElementById('q-email').value.trim();
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const phoneOk = phone.replace(/\D/g,'').length >= 7;
+  return name.length > 1 && phoneOk && emailOk;
+}
+
+function qShowStep(step){
+  qSteps.forEach(el => el.classList.toggle('active', parseInt(el.dataset.step,10) === step));
+  const clampedStep = Math.min(step, TOTAL_STEPS);
+  qStepLabel.textContent = step <= TOTAL_STEPS ? `Step ${step} of ${TOTAL_STEPS}` : 'Your Estimate';
+  qProgressFill.style.width = (Math.min(clampedStep, TOTAL_STEPS) / TOTAL_STEPS * 100) + '%';
+  qBack.disabled = step <= 1;
+  qFwd.disabled = step >= TOTAL_STEPS || !qIsStepAnswered(step);
+  if(step === 5){ qBack.style.visibility = 'hidden'; qFwd.style.visibility = 'hidden'; }
+  else { qBack.style.visibility = 'visible'; qFwd.style.visibility = 'visible'; }
+}
+
+function qSelectOption(group, value, btnEl){
+  qState[group] = value;
+  btnEl.closest('.q-options').querySelectorAll('.q-option').forEach(b => b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+
+  // fire partial-lead webhook right after service is chosen (step 1) — recoverable even if they abandon
+  if(group === 'service'){
+    qFireWebhook('partial_lead', { service: qState.service });
+  }
+
+  // auto-advance
+  setTimeout(() => {
+    if(qState.step < TOTAL_STEPS){
+      qState.step++;
+      qShowStep(qState.step);
+    }
+  }, 220);
+}
+
+qCard.addEventListener('click', e => {
+  const btn = e.target.closest('.q-option');
+  if(!btn) return;
+  const group = btn.closest('.q-options').dataset.group;
+  qSelectOption(group, btn.dataset.value, btn);
+});
+
+qBack.addEventListener('click', () => {
+  if(qState.step > 1){
+    qState.step--;
+    qShowStep(qState.step);
+  }
+});
+qFwd.addEventListener('click', () => {
+  if(qState.step < TOTAL_STEPS && qIsStepAnswered(qState.step)){
+    qState.step++;
+    qShowStep(qState.step);
+  }
+});
+
+['q-name','q-phone','q-email'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById('q-submit').disabled = !qIsContactValid();
+    qFwd.disabled = !qIsStepAnswered(qState.step);
+  });
+});
+
+document.getElementById('q-submit').addEventListener('click', () => {
+  if(!qIsContactValid()) return;
+
+  const range = priceRanges[qState.service];
+  document.getElementById('q-result-service').textContent = range.label;
+  document.getElementById('q-price-range').textContent = `$${range.low.toLocaleString()} – $${range.high.toLocaleString()}`;
+  document.getElementById('q-book-btn').href = '#contact';
+
+  const payload = {
+    name: document.getElementById('q-name').value.trim(),
+    phone: document.getElementById('q-phone').value.trim(),
+    email: document.getElementById('q-email').value.trim(),
+    service: qState.service,
+    timeline: qState.timeline,
+    payment: qState.payment,
+    price_range: `${range.low}-${range.high}`
+  };
+  qFireWebhook('qualifier_submitted', payload);
+
+  qState.step = 5;
+  qShowStep(5);
+});
+
+document.getElementById('q-book-btn').addEventListener('click', () => {
+  qFireWebhook('clicked_book', { service: qState.service });
+});
+document.getElementById('q-financing-link').addEventListener('click', e => {
+  e.preventDefault();
+  qFireWebhook('clicked_financing', { service: qState.service });
+});
+document.getElementById('q-whatsapp-btn').addEventListener('click', () => {
+  qFireWebhook('clicked_whatsapp', { service: qState.service });
+});
+document.getElementById('q-sms-btn').addEventListener('click', () => {
+  qFireWebhook('clicked_sms', { service: qState.service });
+});
+
+function qFireWebhook(eventType, data){
+  fetch(QUALIFIER_WEBHOOK_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event: eventType, ...data, timestamp: new Date().toISOString() })
+  }).catch(() => { /* placeholder URL — swap in real webhook before going live */ });
+}
+
+// entry point from a service modal's "Check Availability" button
+function startQualifierFromModal(serviceId){
+  closeServiceModal();
+  if(!serviceId || !priceRanges[serviceId]) return;
+
+  qState.service = serviceId;
+  qState.step = 2;
+
+  const optBtn = qCard.querySelector(`.q-options[data-group="service"] .q-option[data-value="${serviceId}"]`);
+  if(optBtn){
+    qCard.querySelectorAll('.q-options[data-group="service"] .q-option').forEach(b => b.classList.remove('selected'));
+    optBtn.classList.add('selected');
+  }
+
+  qShowStep(2);
+  setTimeout(() => {
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+qShowStep(1);
 
 /* before/after sliders — pointer-drag based (robust across browsers) */
 document.querySelectorAll('.ba-card').forEach(card=>{
