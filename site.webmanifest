@@ -1,0 +1,21 @@
+{
+  "name": "Maison Véra Aesthetic Studio",
+  "short_name": "Maison Véra",
+  "description": "A private aesthetic studio offering Botox, dermal fillers, laser treatments, skin rejuvenation and body contouring.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0908",
+  "theme_color": "#0a0908",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://maisonvera.studio/</loc>
+    <lastmod>2026-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/botox-neuromodulators.jpg</image:loc>
+      <image:title>Botox &amp; Neuromodulators at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/dermal-fillers.jpg</image:loc>
+      <image:title>Dermal Fillers at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/skin-rejuvenation.jpg</image:loc>
+      <image:title>Skin Rejuvenation at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/laser-treatments.jpg</image:loc>
+      <image:title>Laser Treatments at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/body-contouring.jpg</image:loc>
+      <image:title>Body Contouring at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/services/facial-treatments.jpg</image:loc>
+      <image:title>Facial Treatments at Maison Véra</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://maisonvera.studio/images/doctor/doctor-portrait.jpg</image:loc>
+      <image:title>Dr. A. Moreau, Medical Director</image:title>
+    </image:image>
+  </url>
+
+</urlset>

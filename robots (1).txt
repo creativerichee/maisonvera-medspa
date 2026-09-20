@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+# Block nothing - this is a single-page marketing site
+
+Sitemap: https://maisonvera.studio/sitemap.xml
